@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/RavenDemo/v15
+/RavenDemo.Domain/obj
+/RavenDemo/obj
+/RavenDemo/bin/Debug/netcoreapp2.1
+/RavenDemo.Domain/bin/Debug/netstandard2.0
