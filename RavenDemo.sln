@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDemo", "RavenDemo\RavenDemo.csproj", "{9E0859F4-BF0D-4919-89D3-2E94EB4AA0E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RavenDemo", "RavenDemo\RavenDemo.csproj", "{9E0859F4-BF0D-4919-89D3-2E94EB4AA0E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDemo.Domain", "RavenDemo.Domain\RavenDemo.Domain.csproj", "{87A9AEDA-BE49-4513-8C82-C18AE80DF8BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RavenDemo.Domain", "RavenDemo.Domain\RavenDemo.Domain.csproj", "{87A9AEDA-BE49-4513-8C82-C18AE80DF8BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

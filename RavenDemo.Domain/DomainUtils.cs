@@ -11,16 +11,48 @@ namespace RavenDemo.Domain
 
             for (int id = 0; id < nbOfProducts; id++)
             {
-                products.Add(new Product()
-                {
-                    Id = id + 1,
-                    Name = Lorem.Sentence(3),
-                    Intro = Lorem.Paragraph(2),
-                    Price = RandomNumber.Next(10, 1000)
-                });
+                var p = BuildAProduct(id + 1);
+                UpdateProductTags(p);
+                products.Add(p);
             }
 
             return products;
+        }
+
+        public static Product BuildAProduct(int id)
+        {
+            return new Product()
+            {
+                Id = id,
+                Name = Lorem.Sentence(3),
+                Intro = Lorem.Paragraph(2),
+                Price = RandomNumber.Next(10, 1000)
+            };
+        }
+
+        public static void UpdateProductTags(Product product)
+        {
+            var tags = new List<string>();
+            var number = RandomNumber.Next(0, 5);
+
+            if (number >= 1)
+            {
+                tags.Add("Sport");
+            }
+            if (number >= 2)
+            {
+                tags.Add("Investment");
+            }
+            if (number >= 3)
+            {
+                tags.Add("Banking");
+            }
+            if (number >= 4)
+            {
+                tags.Add("Real Estate");
+            }
+
+            product.Tags = tags;
         }
     }
 }

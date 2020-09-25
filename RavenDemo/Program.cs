@@ -1,4 +1,5 @@
-﻿using Raven.Client;
+﻿using Raven.Abstractions.Data;
+using Raven.Client;
 using Raven.Client.Document;
 using RavenDemo.Domain;
 using System;
@@ -26,6 +27,26 @@ namespace RavenDemo
                     SearchProducts();
                 }
 
+                if (selection == 3)
+                {
+                    GetAProduct();
+                }
+
+                if (selection == 4)
+                {
+                    UpdateAProduct();
+                }
+
+                if (selection == 5)
+                {
+                    DeleteAProduct();
+                }
+
+                if (selection == 6)
+                {
+                    DeleteAllProducts();
+                }
+
             } while (selection >= 0);
         }
 
@@ -36,6 +57,10 @@ namespace RavenDemo
                 "Select your option:" + Environment.NewLine +
                 "1: Initialize sample data" + Environment.NewLine +
                 "2: Search for products" + Environment.NewLine +
+                "3: Get a product" + Environment.NewLine +
+                "4: Update a product" + Environment.NewLine +
+                "5: Delete a product" + Environment.NewLine +
+                "6: Delete ALL products" + Environment.NewLine +
                 "-1: Exit"
             );
 
@@ -62,9 +87,98 @@ namespace RavenDemo
             Console.WriteLine("Documents saved");
         }
 
+        private static void DeleteAProduct()
+        {
+            Console.WriteLine("---" + Environment.NewLine + "Enter a product id");
+            var productId = Console.ReadLine().Trim();
+
+            using (var store = CreateStore())
+            {
+                using (var session = store.OpenSession())
+                {
+                    session.Delete(productId);
+                    session.SaveChanges();
+                }
+            }
+        }
+
+        private static void DeleteAllProducts()
+        {
+            using (var store = CreateStore())
+            {
+                var ops = store.DatabaseCommands.DeleteByIndex("Raven/DocumentsByEntityName",
+                    new IndexQuery()
+                    {
+                        Query = "Tag:Products"
+                    },
+                    new BulkOperationOptions()
+                    {
+                        RetrieveDetails = true,
+                        AllowStale = false
+                    });
+                ops.OnProgressChanged = o =>
+                {
+                    Console.WriteLine("TotalEntries: {0}, ProcessedEntries: {1}", o.TotalEntries, o.ProcessedEntries);
+                };
+                ops.WaitForCompletion();
+            }
+        }
+
+        private static void UpdateAProduct()
+        {
+            Console.WriteLine("---" + Environment.NewLine + "Enter a product id");
+            var productId = Console.ReadLine().Trim();
+
+            using (var store = CreateStore())
+            {
+                using (var session = store.OpenSession())
+                {
+                    var product = session.Load<Product>(productId);
+                    if (product != null)
+                    {
+                        DomainUtils.UpdateProductTags(product);
+
+                        // This method will be used to update the product
+                        session.Store(product);
+
+                        session.SaveChanges();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Id does not match with any product");
+                    }
+                }
+            }
+        }
+
+        private static void GetAProduct()
+        {
+            Console.WriteLine("---" + Environment.NewLine + "Enter a product id");
+            var productId = Console.ReadLine().Trim();
+
+            using (var store = CreateStore())
+            {
+                using (var session = store.OpenSession())
+                {
+                    var product = session.Load<Product>(productId);
+                    var metadata = session.Advanced.GetMetadataFor(product);
+                    if (product != null)
+                    {
+                        Console.WriteLine("------------");
+                        Console.WriteLine("Id: {0}, Name: {1}", product.Id, product.Name);
+                        Console.WriteLine("Last-Modified: {0}", metadata["Last-Modified"]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Id does not match with any product");
+                    }
+                }
+            }
+        }
+
         private static void SearchProducts()
         {
-            Console.WriteLine("Enter your text to search");
+            Console.WriteLine("---" + Environment.NewLine + "Enter your text to search");
             var text = Console.ReadLine().Trim();
 
             var products = Enumerable.Empty<Product>();
@@ -74,7 +188,13 @@ namespace RavenDemo
                 using (var session = store.OpenSession())
                 {
                     var productsQuery = session.Query<Product>()
-                        .Customize(c => c.BeforeQueryExecution(a => a.PageSize = 20));
+                        .Customize(c =>
+                        {
+                            c.BeforeQueryExecution(a =>
+                            {
+                                a.PageSize = 20;
+                            });
+                        });
 
                     if (string.IsNullOrEmpty(text))
                     {
