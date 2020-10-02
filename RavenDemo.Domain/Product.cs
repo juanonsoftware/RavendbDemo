@@ -5,7 +5,7 @@ namespace RavenDemo.Domain
 {
     public class Product
     {
-        public int Id { get; set; } = 0;
+        public string Id { get; set; } = string.Empty;
 
         public string Name { get; set; } = string.Empty;
 

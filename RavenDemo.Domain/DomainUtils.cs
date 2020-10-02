@@ -23,7 +23,7 @@ namespace RavenDemo.Domain
         {
             return new Product()
             {
-                Id = id,
+                Id = id.ToString(),
                 Name = Lorem.Sentence(3),
                 Intro = Lorem.Paragraph(2),
                 Price = RandomNumber.Next(10, 1000)
